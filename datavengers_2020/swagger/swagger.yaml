@@ -1,0 +1,530 @@
+openapi: 3.0.0
+info:
+  title: ITILE API
+  description: API for Interactive Technical Indicators Learning and Exploratory Application
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://datavengers2020.herokuapp.com/
+  description: heroku app server
+tags:
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /:
+    get:
+      tags:
+      - api
+      summary: Load UI page
+      description: |
+        Displays the UI page
+      operationId: display_home
+      responses:
+        "200":
+          description: Successfully loaded the UI page
+          content:
+            text/html:
+              schema:
+                type: string
+                x-content-type: text/html
+      x-openapi-router-controller: datavengers_2020.controllers.api_controller
+  /prices:
+    get:
+      tags:
+      - api
+      summary: get stock prices
+      description: |
+        By passing in the appropriate options, you can get stock prices for the spcified ticker
+      operationId: stock_prices
+      parameters:
+      - name: ticker
+        in: query
+        description: symbol ticker for the stock
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: start date for stock price data
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date-time
+      - name: end_date
+        in: query
+        description: end date for stock price data
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockData'
+        "400":
+          description: bad input parameter
+      x-openapi-router-controller: datavengers_2020.controllers.api_controller
+  /indicator:
+    get:
+      tags:
+      - api
+      summary: get indicator values
+      description: |
+        By passing in the appropriate options, you can get stock indicator values for the spcified ticker
+      operationId: indicator_values
+      parameters:
+      - name: indicator
+        in: query
+        description: indicator for the stock
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/IndicatorType'
+      - name: ticker
+        in: query
+        description: symbol ticker for the stock
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: start date for indicator data
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date-time
+      - name: end_date
+        in: query
+        description: end date for indicator data
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date-time
+      - name: window
+        in: query
+        description: window for calculating the indicator
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: bandwidth
+        in: query
+        description: bandwidth for bollinger bands
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Indicator'
+        "400":
+          description: bad input parameter
+      x-openapi-router-controller: datavengers_2020.controllers.api_controller
+  /simulation:
+    post:
+      tags:
+      - api
+      summary: run simulation
+      description: |
+        Run simulation with supplied rules and tickers for a specified time range
+      operationId: run_simulation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulationRequest'
+        required: true
+      responses:
+        "200":
+          description: Simulation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationResults'
+        "400":
+          description: invalid request
+      x-openapi-router-controller: datavengers_2020.controllers.api_controller
+components:
+  schemas:
+    StockData:
+      required:
+      - end_date
+      - start_date
+      - symbol
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: JPM
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockPrice'
+      example:
+        end_date: 2000-01-23T04:56:07.000+00:00
+        symbol: JPM
+        prices:
+        - date: 2000-01-23T04:56:07.000+00:00
+          high: 100.15
+          volume: 49814383
+          low: 100.25
+          adj_close: 100.85
+          close: 100.35
+          open: 100.27
+        - date: 2000-01-23T04:56:07.000+00:00
+          high: 100.15
+          volume: 49814383
+          low: 100.25
+          adj_close: 100.85
+          close: 100.35
+          open: 100.27
+        start_date: 2000-01-23T04:56:07.000+00:00
+    StockPrice:
+      required:
+      - adj_close
+      - close
+      - date
+      - high
+      - low
+      - open
+      - volume
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        open:
+          type: number
+          example: 100.27
+        high:
+          type: number
+          example: 100.15
+        low:
+          type: number
+          example: 100.25
+        close:
+          type: number
+          example: 100.35
+        adj_close:
+          type: number
+          example: 100.85
+        volume:
+          type: number
+          example: 49814383
+      example:
+        date: 2000-01-23T04:56:07.000+00:00
+        high: 100.15
+        volume: 49814383
+        low: 100.25
+        adj_close: 100.85
+        close: 100.35
+        open: 100.27
+    Indicator:
+      required:
+      - indicator
+      - windowSize
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: MSFT
+        indicator:
+          type: string
+          example: CCI
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        windowSize:
+          type: integer
+          example: 20
+        bandwidth:
+          type: number
+          description: Only used for bollinger bands, this indicates the bandwidth
+          example: 2
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndicatorValue'
+      example:
+        indicator: CCI
+        end_date: 2000-01-23T04:56:07.000+00:00
+        symbol: MSFT
+        windowSize: 20
+        bandwidth: 2
+        values:
+        - date: 2000-01-23T04:56:07.000+00:00
+          upper: 133.2735
+          lower: 205.117
+          value: 169.1953
+        - date: 2000-01-23T04:56:07.000+00:00
+          upper: 133.2735
+          lower: 205.117
+          value: 169.1953
+        start_date: 2000-01-23T04:56:07.000+00:00
+    IndicatorValue:
+      required:
+      - date
+      - value
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        value:
+          type: number
+          description: In bollinger bands this indicates middle band value, otherwise
+            indicator value
+          example: 169.1953
+        upper:
+          type: number
+          description: Only used for bollinger bands, this indicates upper band value
+          example: 133.2735
+        lower:
+          type: number
+          description: Only used for bollinger bands, this indicates lower band value
+          example: 205.117
+      example:
+        date: 2000-01-23T04:56:07.000+00:00
+        upper: 133.2735
+        lower: 205.117
+        value: 169.1953
+    SimulationRequest:
+      required:
+      - algorithm
+      - indicators
+      - initialCondition
+      - symbols
+      - testingEndDate
+      - testingStartDate
+      - trainingEndDate
+      - trainingStartDate
+      type: object
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+        trainingStartDate:
+          type: string
+          format: date-time
+        trainingEndDate:
+          type: string
+          format: date-time
+        testingStartDate:
+          type: string
+          format: date-time
+        testingEndDate:
+          type: string
+          format: date-time
+        algorithm:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlgorithmType'
+        initialCondition:
+          type: array
+          items:
+            $ref: '#/components/schemas/InitialCondition'
+        indicators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Indicator'
+    InitialCondition:
+      required:
+      - cash
+      - share
+      type: object
+      properties:
+        cash:
+          type: number
+          example: 10000
+        share:
+          type: number
+          example: 100
+    SimulationResults:
+      required:
+      - test
+      - train
+      type: object
+      properties:
+        train:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayResult'
+        test:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayResult'
+      example:
+        test:
+        - date: 2000-01-23T04:56:07.000+00:00
+          sma: 90.1
+          percent_b: 90.1
+          cci: 90.1
+          bb_bottom: 9
+          rsi: 90.1
+          holding: 100
+          high: 100.15
+          volume: 49814383
+          trade: 0
+          low: 100.25
+          ema: 90.1
+          adj_close: 100.85
+          bb_top: 90.1
+          close: 100.35
+          cash: 10000
+          value: 38186.97
+          open: 100.27
+        train:
+        - date: 2000-01-23T04:56:07.000+00:00
+          sma: 90.1
+          percent_b: 90.1
+          cci: 90.1
+          bb_bottom: 9
+          rsi: 90.1
+          holding: 100
+          high: 100.15
+          volume: 49814383
+          trade: 0
+          low: 100.25
+          ema: 90.1
+          adj_close: 100.85
+          bb_top: 90.1
+          close: 100.35
+          cash: 10000
+          value: 38186.97
+          open: 100.27
+    DayResult:
+      required:
+      - adj_close
+      - cash
+      - close
+      - date
+      - high
+      - holding
+      - low
+      - open
+      - trade
+      - value
+      - volume
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        open:
+          type: number
+          example: 100.27
+        high:
+          type: number
+          example: 100.15
+        low:
+          type: number
+          example: 100.25
+        close:
+          type: number
+          example: 100.35
+        adj_close:
+          type: number
+          example: 100.85
+        volume:
+          type: number
+          example: 49814383
+        sma:
+          type: number
+          example: 90.1
+        ema:
+          type: number
+          example: 90.1
+        bb_top:
+          type: number
+          example: 90.1
+        bb_bottom:
+          type: number
+          example: 9
+        percent_b:
+          type: number
+          example: 90.1
+        rsi:
+          type: number
+          example: 90.1
+        cci:
+          type: number
+          example: 90.1
+        trade:
+          type: number
+          example: 0
+        holding:
+          type: number
+          example: 100
+        cash:
+          type: number
+          example: 10000
+        value:
+          type: number
+          example: 38186.97
+      example:
+        date: 2000-01-23T04:56:07.000+00:00
+        sma: 90.1
+        percent_b: 90.1
+        cci: 90.1
+        bb_bottom: 9
+        rsi: 90.1
+        holding: 100
+        high: 100.15
+        volume: 49814383
+        trade: 0
+        low: 100.25
+        ema: 90.1
+        adj_close: 100.85
+        bb_top: 90.1
+        close: 100.35
+        cash: 10000
+        value: 38186.97
+        open: 100.27
+    AlgorithmType:
+      type: string
+      enum:
+      - RF
+      - Q-learner
+    IndicatorType:
+      type: string
+      enum:
+      - sma
+      - ema
+      - cci
+      - rsi
+      - bbands
+

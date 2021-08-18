@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/lib/favicon.ico">
+<title>DataVengers2020</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script type="text/javascript" src="/static/lib/d3.v5.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/lib/d3-simple-slider.min.js"></script>
+<script type="text/javascript" src="/static/lib/d3-tip.min.js"></script>
+<script type="text/javascript" src="/static/lib/d3-scale-chromatic.v1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="/static/css/spinner.css">
+<link rel="stylesheet" href="/static/css/tooltip.css">
+<link rel="stylesheet" href="/static/css/display.css">
+<style>
+body{
+  font-size:14px;
+}
+text {
+  fill: #000;
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+body{
+  text-align:center;
+}
+</style>
+<body>
+  <!-- <div id="menu-container">
+    <h3>CSE 6242 Project</h3>
+  </div> -->
+  <div id="main-container">
+    <div id="candle-stick-div" class="entire-row">
+      <div class="param-control ">
+        <div class="param-div">
+          <span>Select Stock:</span><br>
+          <select id="symbol-search"></select>
+        </div>
+        <div class="param-div">
+          <span>Start Date:</span><br>
+          <input type="date" id="date-range-input-1" min="2000-01-01" max="2019-12-31"/>
+        </div>
+        <div class="param-div">
+          <span>End Date:</span><br>
+          <input type="date" id="date-range-input-2" min="2000-01-01" max="2019-12-31"/>
+        </div>
+        <div class="param-div">
+          <span>Money to Invest:</span><br>
+          <input type="number" id="initial-cash-input"/>
+        </div>
+        <div class="param-div">
+          <span>Shares Started With:</span><br>
+          <input type="number" id="initial-holding-input"/>
+        </div>
+        <div class="">
+          <button onclick="submitDataSelection()">GO</button>
+        </div>
+      </div>
+      <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+      <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+    </div>
+    <div class="always-on-top">
+      <ul class="nav nav-tabs nav-justified" role="tablist" id="indicator-selection-tabs">
+      </ul>
+    </div>
+    <div class="tab-content">
+      <div id="sma-div" class="tab-pane fade active show">
+        <div class="param-control"></div>
+        <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="indicator-description">
+          <h4>Simple Moving Average (SMA)</h4>
+          <div class="indicator-description-text">
+            <h5>What is it:</h5>
+            <ul>
+              <li>Most moving averages are based on closing prices; for example, a 5-day simple moving average is the five-day sum of closing prices divided by five.</li>
+              <li>A simple moving average is formed by computing the average price of a security over a specific number of periods.</li>
+              <li>Smoothes data and helps eliminate noise.</li>
+              <li>Useful in helping identify the direction of trends: upward (bullish), downward (bearish), sideways.</li>
+              <li><a target="_blank" href="https://school.stockcharts.com/doku.php?id=technical_indicators:moving_averages">Read more on SMA.</a></li>
+            </ul>
+          </div>
+          <div class="indicator-description-rule">
+            <h5>How to use it:</h5>
+            <ul>
+              <li><h6>Sell Signal:</h6>
+                <ul>
+                  <li>When price crosses moving average downward (Price/SMA ratio < 1), the price will most likely go lower, triggering a sell signal.</li>
+                </ul>
+              </li>
+              <br>
+              <li><h6>Buy Signal:</h6>
+                <ul>
+                  <li>When price crosses moving average upwards (Price/SMA ratio > 1), the price will most likely continue to go up, triggering a buy signal.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="ema-div" class="tab-pane fade">
+        <div class="param-control"></div>
+        <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="indicator-description">
+          <h4>Exponential Moving Average (EMA)</h4>
+          <div class="indicator-description-text">
+            <h5>What is it:</h5>
+            <ul>
+              <li>Most moving averages are based on closing prices; for example, a 5-day simple moving average is the five-day sum of closing prices divided by five.</li>
+              <li>Exponential moving averages (EMAs) reduce the lag by applying more weight to recent prices. The weighting applied to the most recent price depends on the number of periods in the moving average.</li>
+              <li>Smoothes data and helps eliminate noise.</li>
+              <li>Useful in helping identify the direction of trends: upward (bullish), downward (bearish), sideways.</li>
+              <li><a target="_blank" href="https://school.stockcharts.com/doku.php?id=technical_indicators:moving_averages">Read more on EMA.</a></li>
+            </ul>
+          </div>
+          <div class="indicator-description-rule">
+            <h5>How to use it:</h5>
+            <ul>
+              <li><h6>Sell Signal:</h6>
+                <ul>
+                  <li>When price crosses moving average downward (Price/EMA ratio < 1), the price will most likely go lower, triggering a sell signal.</li>
+                </ul>
+              </li>
+              <br>
+              <li><h6>Buy Signal:</h6>
+                <ul>
+                  <li>When price crosses moving average upwards (Price/EMA ratio > 1), the price will most likely continue to go up, triggering a buy signal.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="bb-div" class="tab-pane fade">
+        <div class="param-control"></div>
+        <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="indicator-description">
+          <h4>Bollinger Bands&reg;</h4>
+          <div class="indicator-description-text">
+            <h5>What is it:</h5>
+            <ul>
+              <li>Created in the 1980’s by John Bollinger as a method for traders to identify extreme short term prices in a security.</li>
+              <li>The indicator is created by plotting the average of a predetermined number of prices along with two trading bands above and below. The outer bands are created by simply adding and subtracting one standard deviation from the moving average (standard deviation is used because it is a common measure of volatility).</li>
+              <li>By measuring price volatility, Bollinger Bands® adjust themselves to market conditions. This is what makes them so handy for traders; they can find almost all of the price data needed between the two bands.</li>
+              <li>If the Bollinger Bands start to pinch together then there is a chance that the volatility will increase and a trading opportunity will appear.</li>
+              <li>Percent Bandwidth (%B) is an indicator derived from the standard Bollinger Bands indicator. It quantifies where price is in relation to the bands.</li>
+              <li><a target="_blank" href="https://www.investopedia.com/articles/technical/102201.asp">Read more on Bollinger Bands&reg;.</a></li>
+            </ul>
+          </div>
+          <div class="indicator-description-rule">
+            <h5>How to use it:</h5>
+            <ul>
+              <li><h6>Sell Signal:</h6>
+                <ul>
+                  <li>If the price moves beyond the upper band (%B > 1), prices are thought to be overbought and could be due for a pull back triggering a sell signal.</li>
+                </ul>
+              </li>
+              <br>
+              <li><h6>Buy Signal:</h6>
+                <ul>
+                  <li>If the price moves below the lower band (%B < 0), prices are thought to be oversold triggering a buy signal.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="rsi-div" class="tab-pane fade">
+        <div class="param-control"></div>
+        <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="indicator-description">
+          <h4>Relative Strength Index (RSI)</h4>
+          <div class="indicator-description-text">
+            <h5>What is it:</h5>
+            <ul>
+              <li>RSI is an extremely popular momentum oscillator. It’s an oscillator because it oscillates between to ranges of high and low value and a momentum indicator because it measures how much interest currently exists in the price by measuring the speed and change (magnitude) of price movement. RSI helps analyze stocks that are overbought or oversold.</li>
+              <li>RSI oscillates between 0 and 100 where values over 70 indicate the stock is overbought and values below 30 indicate the stock is oversold.</li>
+              <li>Period Averages (Window) size of 14 days is suggested by J. Well Wilder (Developer).</li>
+              <li><a target="_blank" href="https://www.investopedia.com/articles/active-trading/042114/overbought-or-oversold-use-relative-strength-index-find-out.asp">Read more on RSI.</a></li>
+            </ul>
+          </div>
+          <div class="indicator-description-rule">
+            <h5>How to use it:</h5>
+            <ul>
+              <li><h6>Sell Signal:</h6>
+                <ul>
+                  <li>When the RSI value moves downward and drops below 70.</li>
+                  <li>If the RSI can’t reach 70 on a number of consecutive price swings during an uptrend but then drops below 30. The trend has weakened, and the price could be going lower.</li>
+                </ul>
+              </li>
+              <br>
+              <li><h6>Buy Signal:</h6>
+                <ul>
+                  <li>When the RSI value moves upward and goes above 30.</li>
+                  <li>If the RSI can’t reach 30 or below on a number of consecutive price swings during a downtrend. The trend has strengthened, and the price could start to go up.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="cci-div" class="tab-pane fade">
+        <div class="param-control"></div>
+        <div class="indicator-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="policy-return-chart"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+        <div class="indicator-description">
+          <h4>Commodity Channel Index (CCI)</h4>
+          <div class="indicator-description-text">
+            <h5>What is it:</h5>
+            <ul>
+              <li>The CCI compares the current price to an average price over a period of time. The indicator fluctuates above or below zero, moving into positive or negative territory. While most values, approximately 75%, fall between -100 and +100, about 25% of the values fall outside this range, indicating a lot of weakness or strength in the price movement.</li>
+              <li>Despite its name, the CCI can be used in any market and is not just for commodities.</li>
+              <li>Different strategies can use the CCI in different ways, including using it across multiple timeframes to establish dominant trends, pullbacks, or entry points into that trend.</li>
+              <li>Some trading strategies based on CCI can produce multiple false signals or losing trades when conditions turn choppy.</li>
+              <li><a target="_blank" href="https://www.investopedia.com/articles/active-trading/031914/how-traders-can-utilize-cci-commodity-channel-index-trade-stock-trends.asp">Read more on CCI.</a></li>
+            </ul>
+          </div>
+          <div class="indicator-description-rule">
+            <h5>How to use it:</h5>
+            <ul>
+              <li><h6>Sell Signal:</h6>
+                <ul>
+                  <li>The CCI crosses above 100 and has started to curve downward.</li>
+                  <li>There is a bearish divergence between the CCI and the actual price movement, characterized by downward movement in the CCI while the price of the asset continues to move higher or moves sideways.</li>
+                </ul>
+              </li>
+              <br>
+              <li><h6>Buy Signal:</h6>
+                <ul>
+                  <li>The CCI crosses below -100 and has started to curve upward.</li>
+                  <li>There is a bullish divergence between the CCI and the actual price movement, characterized by upward movement in the CCI while the price of the asset continues to move downward or sideways.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </div>
+    <div id="sim-div" class="tab-pane fade">
+      <div class="param-control entire-row"></div>
+      <!-- <div class="simulation-chart-train" style="height:0;">
+        <div class="title-svg-container"><svg class="chart-title"/></div>
+        <div class="fixed-svg-container"><svg class="chart-left"/></div>
+        <div class="fixed-svg-container-right"><svg class="chart-right"/></div>
+        <div class="scorll-svg-container"><svg class="chart-plot"/></div>
+      </div>
+      <div class="simulation-chart-test" style="height:0;">
+        <div class="title-svg-container"><svg class="chart-title"/></div>
+        <div class="fixed-svg-container"><svg class="chart-left"/></div>
+        <div class="fixed-svg-container-right"><svg class="chart-right"/></div>
+        <div class="scorll-svg-container"><svg class="chart-plot"/></div>
+      </div> -->
+      <div style="display:none;" id="show-train-or-test-div">
+        <span>
+          <input type="radio" id="show-sim-train" name="show-train-or-test-radio" value="train">
+          <label for="show-sim-train">Training Performance</label>
+        </span>
+        <span style="margin-left:10px;">
+          <input type="radio" id="show-sim-test" name="show-train-or-test-radio" value="test">
+          <label for="show-sim-test">Testing Performance</label>
+        </span>
+      </div>
+      <div class="indicator-chart" style="height:0;"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+      <div class="policy-return-chart" style="height:0;"><div class="title-svg-container"><svg class="chart-title"/></div><div class="fixed-svg-container"><svg class="chart-left"/></div><div class="scorll-svg-container"><svg class="chart-plot"/></div></div>
+
+      <div class="indicator-description entire-row">
+        <h4>Simulation</h4>
+        <div class="indicator-description-text">
+          <h5>What is it:</h5>
+          <ul>
+            <li>Our simulation engine leverages machine learning techniques and historic stock market data (training period) to generate buy and sell orders for a stock over the testing period.</li>
+            <li>These orders will then be applied in a market simulation to compute a portfolio's value and statistics.</li>
+          </ul>
+          <h5>How does it learn:</h5>
+          <ul>
+            <li>Data collection: The training dataset will be generated from market data prior to the time period selected on top, using the chosen indicators as features along with stock market data attributes (high, low, adj. close, volume).</li>
+            <li>Class label generation: Class labels of "buy", "sell" and "hold" will be assigned by anaylizing price movements in training data.</li>
+            <li>Machine learning: The training dataset as well as class labels will be fed to the machine learning model of choice.</li>
+            <li>Learning application: The fitted model will then be applied to the testing dataset (over the same time period as selected at the top under Start and End Dates) to generate "buy", "sell" and "hold" decisions.</li>
+            <li>Market simulation: Market orders will be placed based on "buy" and "sell" labels to asses machine learning's output.</li>
+          </ul>
+        </div>
+        <div class="indicator-description-rule">
+          <h5>Machine learning models we use:</h5>
+          <ul>
+            <li><h6>Random Forest Classifier:</h6>
+              <ul>
+                <li>A supervised learning algorithm.</li>
+                <li>Consists of a large number of individual decision trees that operate as an ensemble. Each individual tree in the random forest spits out a class prediction and the class with the most votes becomes our model’s prediction.</li>
+                <li>A decision tree is a flowchart-like structure in which each internal node represents a "test" on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label (decision taken after computing all attributes).</li>
+                <li>We use stock market data as well as technical indicator values as attributes.</li>
+                <li>We assign "buy", "sell" and "hold" decisions as labels/classes at the leaf nodes.</li>
+                <li><a target="_blank" href="https://en.wikipedia.org/wiki/Decision_tree_learning">Read more on Decision Trees.</a></li>
+                <li><a target="_blank" href="https://en.wikipedia.org/wiki/Random_forest">Read more on Random Forest.</a></li>
+              </ul>
+            </li>
+            <br>
+            <li><h6>Q-Learner:</h6>
+              <ul>
+                <li>A reinforcement learning algorithm.</li>
+                <li>A Q-value is the expected future reward of taking an action in a certain state, and can be said to stand for the "quality" of an action taken in a given state.</li>
+                <li>Q-Learner finds an optimal policy (actions to take) in the sense of maximizing the expected total reward over successive steps, starting from the current state.</li>
+                <li>Our state space consists of stock market data and technical indicator values.</li>
+                <li>We find optimal policy involing actions of buy, sell and hold.</li>
+                <li><a target="_blank" href="https://quantsoftware.gatech.edu/Deep_Q-Learning">Read more on Q-Learner.</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+<div id="cover-spin"></div>
+</body>
+<script type="text/javascript" src="/static/js/httpHandler.js"></script>
+<script type="text/javascript" src="/static/js/calculator.js"></script>
+<script type="text/javascript" src="/static/js/plotter.js"></script>
+<script type="text/javascript" src="/static/js/controller.js"></script>
+</html>

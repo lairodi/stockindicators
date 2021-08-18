@@ -1,0 +1,125 @@
+#menu-container{
+  width:100%;
+}
+#main-container{
+  margin:auto;
+  display:inline-block;
+  text-align:left;
+}
+
+button{
+  margin-top:5px;
+  margin-bottom:5px;
+  width:140px;
+  height:26px;
+  border-radius: .25rem;
+  color: #fff;
+  background-color: #0080FF;
+  border-color: #0080FF;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.always-on-top{
+  /* border-bottom:1px solid #808080; */
+  margin-bottom:10px;
+  width:100%;
+  display:inline-block;
+  background-color:#ffffff;
+}
+.indicator-row{
+  /* display:hidden; */
+}
+a.nav-link{
+  color:#546E7A;
+}
+.nav-tabs .nav-link.active{
+  font-weight:650;
+  color:#000000;
+}
+ul.nav li{
+  display:inline-block;
+}
+.entire-row{
+  margin-bottom:10px;
+  width:100%;
+  display:inline-block;
+  background-color:#ffffff;
+}
+.param-control{
+  display:inline-block;
+  float:left;
+  text-align:center;
+  padding-bottom:10px;
+  padding-top:5px;
+  border-bottom:1px solid #808080;
+}
+.param-div{
+  vertical-align:text-top;
+  width:200px;
+  display:inline-block;
+  text-align:center;
+  margin-bottom:5px;
+  padding-left:15px;
+  padding-right:15px;
+}
+.indicator-chart{
+  display:inline-block;
+  float:left;
+}
+.policy-return-chart{
+  display:inline-block;
+  float:left;
+}
+.simulation-chart-train, .simulation-chart-test{
+  display:inline-block;
+  float:left;
+}
+.scorll-svg-container{
+  overflow:scroll;
+  /* float:left; */
+}
+.fixed-svg-container{
+  float:left;
+}
+.fixed-svg-container-right{
+  float:right;
+}
+
+.indicator-description{
+  display:inline-block;
+  padding-top:20px;
+  padding-bottom:20px;
+}
+.indicator-description-text{
+  float:left;
+  width:48%;
+}
+.indicator-description-text ul{
+  list-style-type: square;
+}
+.indicator-description-rule{
+  float:right;
+  width:48%;
+}
+
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display:block;
+}
+
+
+
+select,input[type="Date"],button{
+  width:140px;
+  margin-bottom:5px;
+  height:27px;
+}
+
+input[type="checkbox"]{
+  width:20px;
+}
+label[for="enable-indicator"]{
+  width:75px;
+}

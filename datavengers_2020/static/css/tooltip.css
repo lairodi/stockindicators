@@ -1,0 +1,51 @@
+.tooltip {
+  position: absolute;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.d3-tip{
+  width: 120px;
+  /* position:relative; */
+  background-color: #000000;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  font-size:12px;
+  text-align:left;
+  padding-left:5px;
+  opacity:0.8;
+}
+.d3-tip.e:before {
+    content:'';
+    position: absolute;
+    top: 45%;
+    left: -8px;
+    width: 0;
+    height: 0;
+    /* border-left: solid 8px #ff0000; */
+    border-right: solid 8px #000000;
+    border-top: solid 8px transparent;
+    border-bottom: solid 8px transparent;
+}
+.d3-tip.n:after {
+    content:'';
+    position: absolute;
+    top: 100%;
+    left:45%;
+    width: 0;
+    height: 0;
+    border-top: solid 8px #000000;
+    border-left: solid 8px transparent;
+    border-right: solid 8px transparent;
+}
+.double-side-tip .left-half{
+  width:49%;
+  float:left;
+  border-right:1px solid #d8d8d8;
+}
+.double-side-tip .right-half{
+  width:49%;
+  float:right;
+}
